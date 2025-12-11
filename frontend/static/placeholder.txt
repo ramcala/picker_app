@@ -1,0 +1,2 @@
+This folder holds static frontend files (JS/CSS/images). Place your frontend build here.
+
