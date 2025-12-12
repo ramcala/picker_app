@@ -76,24 +76,9 @@ async def serve_ui():
 
 @app.get("/")
 async def root():
-    """Root endpoint - app information"""
-    return {
-        "app": APP_NAME,
-        "version": API_VERSION,
-        "status": "running",
-        "endpoints": {
-            "health": "/health",
-            "ui": "/ui",
-            "docs": "/docs",
-            "api": {
-                "products": "/api/v1/products",
-                "orders": "/api/v1/orders",
-                "picking": "/api/v1/picking",
-                "agents": "/api/v1/agents",
-                "webhooks": "/webhook/order"
-            }
-        }
-    }
+    """Redirect root to the UI."""
+    from fastapi.responses import RedirectResponse
+    return RedirectResponse(url="/ui")
 
 
 # ===== Health Check =====
