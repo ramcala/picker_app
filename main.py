@@ -1,9 +1,10 @@
 import logging
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from fastapi.responses import JSONResponse, FileResponse
 from pathlib import Path
+from fastapi.templating import Jinja2Templates
 
 from config import APP_NAME, API_VERSION, DEBUG, DATABASE_URL
 from models import Base, engine, Product, Inventory, Order, OrderItem, PickingActivity, CrateLabel, Agent as AgentModel, Customer
@@ -65,13 +66,18 @@ app.include_router(controllers_agents.router)
 from fastapi.staticfiles import StaticFiles
 app.mount('/static', StaticFiles(directory='frontend/static'), name='static')
 
+# Setup Jinja2 templates so the backend can inject configuration into index.html
+templates = Jinja2Templates(directory=str(Path(__file__).parent / "frontend" / "templates"))
+
 
 # ===== UI Routes =====
 @app.get("/ui")
-async def serve_ui():
-    """Serve the main UI page"""
-    ui_path = Path(__file__).parent / "frontend" / "templates" / "index.html"
-    return FileResponse(ui_path)
+async def serve_ui(request: Request):
+    """Serve the main UI page and inject backend API base URL for dynamic host configuration."""
+    # Build the API base URL from the current request base (e.g., http://host:port/api/v1)
+    base = str(request.base_url).rstrip('/')
+    api_base_url = f"{base}/api/v1"
+    return templates.TemplateResponse("index.html", {"request": request, "api_base_url": api_base_url})
 
 
 @app.get("/")

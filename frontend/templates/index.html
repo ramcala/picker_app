@@ -798,6 +798,9 @@
     </style>
 </head>
 <body>
+    {# Inject backend-provided API base URL for frontend JS #}
+    <meta name="api-base-url" content="{{ api_base_url }}">
+    <script>window.__API_BASE_URL__ = "{{ api_base_url }}";</script>
     <!-- ===== LOGIN PAGE ===== -->
     <div id="loginPage" class="login-container">
         <div class="login-left">
@@ -1129,7 +1132,14 @@
 
     <script>
         // ===== API Configuration =====
-        const API_BASE_URL = 'http://localhost:8000/api/v1';
+        // Determine API base URL dynamically:
+        // Priority:
+        // 1) <meta name="api-base-url" content="..."> set by backend templates
+        // 2) window.__API_BASE_URL__ (a global injected by server)
+        // 3) fallback to current origin + '/api/v1'
+        const DEFAULT_API_PATH = '/api/v1';
+        const metaApi = document.querySelector('meta[name="api-base-url"]');
+        const API_BASE_URL = metaApi?.content || window.__API_BASE_URL__ || (window.location.origin + DEFAULT_API_PATH);
         let token = null;
         let currentUser = null;
         let currentPage = 'login';
