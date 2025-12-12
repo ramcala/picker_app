@@ -1,0 +1,100 @@
+{
+  "info": {
+    "name": "Picker App - Webhooks",
+    "_postman_id": "picker-webhooks-collection",
+    "description": "Collection to exercise webhook endpoints for the Picker app (create orders/products/inventory/customers and update orders). Replace {{baseUrl}} and {{webhookToken}} as needed.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8000" },
+    { "key": "webhookToken", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Create Order (webhook) - /packer-order/create",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "X-Webhook-Token", "value": "{{webhookToken}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"code\": 200,\n  \"status\": \"SUCCESS\",\n  \"data\": {\n    \"order\": [\n      {\n        \"id\": 28555,\n        \"referenceNumber\": \"2346\",\n        \"customerId\": \"295373\",\n        \"status\": \"PENDING\",\n        \"amount\": \"390.00\",\n        \"discount\": \"34.00\",\n        \"shipping\": \"0.00\",\n        \"pickupLocation\": {\n          \"id\": 6402\n        },\n        \"items\": [\n          {\n            \"id\": 111294943,\n            \"name\": \"Regular Choice Longer Rice - 5 Kg\",\n            \"orderDetails\": {\n              \"orderedQuantity\": \"1.00000\",\n              \"mrp\": \"390.00000\",\n              \"discount\": \"34.00000\"\n            },\n            \"storeSpecificData\": [\n              {\n                \"storeId\": 6402,\n                \"stock\": 10,\n                \"mrp\": 390,\n                \"discount\": 34\n              }\n            ]\n          }\n        ]\n      }\n    ]\n  }\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/packer-order/create"
+        }
+      }
+    },
+    {
+      "name": "Create/Update Product - /webhook/product",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "X-Webhook-Token", "value": "{{webhookToken}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"product\": {\n    \"id\": 111294943,\n    \"clientItemId\": \"61\",\n    \"name\": \"Regular Choice Longer Rice - 5 Kg\",\n    \"status\": \"ENABLED\",\n    \"storeSpecificData\": [\n      {\n        \"storeId\": 6402,\n        \"stock\": 100,\n        \"mrp\": 390,\n        \"discount\": 34\n      }\n    ]\n  }\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/webhook/product"
+        }
+      }
+    },
+    {
+      "name": "Create/Update Inventory - /webhook/inventory",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "X-Webhook-Token", "value": "{{webhookToken}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"inventory\": {\n    \"productId\": 111294943,\n    \"storeId\": 6402,\n    \"stock\": 100\n  }\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/webhook/inventory"
+        }
+      }
+    },
+    {
+      "name": "Create/Update Customer - /webhook/customer",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "X-Webhook-Token", "value": "{{webhookToken}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"customer\": {\n    \"id\": 295373,\n    \"name\": \"Nipun jjj\",\n    \"defaultEmail\": { \"email\": \"xyz@gmail.com\" },\n    \"defaultPhone\": { \"phone\": \"+919999999999\" }\n  }\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/webhook/customer"
+        }
+      }
+    },
+    {
+      "name": "Update Order (partial) - /webhook/order/update",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "X-Webhook-Token", "value": "{{webhookToken}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"order\": {\n    \"referenceNumber\": \"2346\",\n    \"status\": \"PACKED\",\n    \"packageMetaData\": {\n      \"packages\": {\n        \"label\": {\n          \"weight\": 500,\n          \"items\": { \"111294943\": 1 }\n        }\n      }\n    }\n  }\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/webhook/order/update"
+        }
+      }
+    }
+  ]
+}
+
